@@ -1,4 +1,4 @@
-module github.com/fabioods/go-model
+module github.com/fabioods/go-orders
 
 go 1.24.0
 

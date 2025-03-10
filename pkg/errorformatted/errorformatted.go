@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/fabioods/go-model/pkg/trace"
+	"github.com/fabioods/go-orders/pkg/trace"
 )
 
 const emptyStatusCode = 0

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/fabioods/go-model/pkg/rollback"
+	"github.com/fabioods/go-orders/pkg/rollback"
 	"github.com/stretchr/testify/assert"
 )
 
