@@ -22,8 +22,15 @@ func TestRollback_Add_Happy(t *testing.T) {
 	rb := rollback.New()
 
 	// Act
-	rb.Add("function one", func() {
+	rb.Add("function one", func() error {
 		fmt.Println("done function one")
+		return nil
+	}).Add("function two", func() error {
+		fmt.Println("done function two")
+		return nil
+	}).Add("function tree", func() error {
+		fmt.Println("done function two")
+		return nil
 	})
 
 	// Assert
@@ -35,14 +42,17 @@ func TestRollback_Do_Happy(t *testing.T) {
 	ctx := context.Background()
 
 	rb := rollback.New().
-		Add("function one", func() {
+		Add("function one", func() error {
 			fmt.Println("done function one")
+			return nil
 		}).
-		Add("function two", func() {
+		Add("function two", func() error {
 			fmt.Println("done function two")
+			return nil
 		}).
-		Add("function tree", func() {
+		Add("function tree", func() error {
 			fmt.Println("done function two")
+			return nil
 		})
 
 	// Act

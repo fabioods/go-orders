@@ -5,8 +5,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/fabioods/go-orders/internal/errorcode"
+	errorformated "github.com/fabioods/go-orders/pkg/errorformatted"
+	"github.com/fabioods/go-orders/pkg/trace"
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -46,4 +50,27 @@ func (u *User) Validate() error {
 		return fmt.Errorf("%s", strings.Join(errMsgs, "; "))
 	}
 	return nil
+}
+
+func (u *User) SetAvatar(avatar string) {
+	u.AvatarURL = avatar
+}
+
+func (u *User) SetPassword(password string) error {
+	hash, err := u.hashPassword(password)
+	if err != nil {
+		return err
+	}
+	u.Password = hash
+	return nil
+}
+
+func (u *User) hashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		ef := errorformated.UnexpectedError(trace.GetTrace(), errorcode.ErrorUserBcryptError, "%s", err.Error())
+		return "", ef
+	}
+
+	return string(bytes), nil
 }

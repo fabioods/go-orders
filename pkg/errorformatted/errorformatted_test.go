@@ -1,4 +1,4 @@
-package errorformated
+package errorformatted
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ import (
 )
 
 func TestErrorFormatted(t *testing.T) {
-	errorF := ErrorFormated{
+	errorF := ErrorFormatted{
 		Code:    "error-code",
 		Message: "error-message",
 		Status:  http.StatusBadRequest,
@@ -22,7 +22,7 @@ func TestErrorFormatted(t *testing.T) {
 }
 
 func TestErrorFormatted_NoStatusCode(t *testing.T) {
-	errorF := ErrorFormated{
+	errorF := ErrorFormatted{
 		Code:    "error-code",
 		Message: "error-message",
 		Cause:   errors.New("error-cause"),
@@ -39,19 +39,19 @@ func TestErrorFormatted_BadRequestError(t *testing.T) {
 }
 
 func TestErrorFormatted_NotFoundError(t *testing.T) {
-	errorFormated := NotFoundError(trace.GetTrace(), "error-message", "error-cause")
-	assert.Equal(t, errorFormated.Error(), "error-cause")
-	assert.Equal(t, http.StatusNotFound, errorFormated.StatusCode())
+	errorFormatted := NotFoundError(trace.GetTrace(), "error-message", "error-cause")
+	assert.Equal(t, errorFormatted.Error(), "error-cause")
+	assert.Equal(t, http.StatusNotFound, errorFormatted.StatusCode())
 }
 
 func TestErrorFormatted_UnexpectedError(t *testing.T) {
-	errorFormated := UnexpectedError(trace.GetTrace(), "error-message", "error-cause")
-	assert.Equal(t, errorFormated.Error(), "error-cause")
-	assert.Equal(t, http.StatusInternalServerError, errorFormated.StatusCode())
+	errorFormatted := UnexpectedError(trace.GetTrace(), "error-message", "error-cause")
+	assert.Equal(t, errorFormatted.Error(), "error-cause")
+	assert.Equal(t, http.StatusInternalServerError, errorFormatted.StatusCode())
 }
 
 func TestErrorFormatted_UnprocesableEntityError(t *testing.T) {
-	errorFormated := UnprocesableEntityError(trace.GetTrace(), "error-message", "error-cause")
-	assert.Equal(t, errorFormated.Error(), "error-cause")
-	assert.Equal(t, http.StatusUnprocessableEntity, errorFormated.StatusCode())
+	errorFormatted := UnprocesableEntityError(trace.GetTrace(), "error-message", "error-cause")
+	assert.Equal(t, errorFormatted.Error(), "error-cause")
+	assert.Equal(t, http.StatusUnprocessableEntity, errorFormatted.StatusCode())
 }

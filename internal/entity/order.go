@@ -64,6 +64,10 @@ func (o *Order) AddItem(item *OrderItem) {
 	o.Items = append(o.Items, item)
 }
 
+func (o *Order) AddItems(items []*OrderItem) {
+	o.Items = append(o.Items, items...)
+}
+
 func (o *Order) Validate() error {
 	validate := validator.New()
 	err := validate.Struct(o)

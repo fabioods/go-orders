@@ -1,4 +1,4 @@
-package errorformated
+package errorformatted
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 
 const emptyStatusCode = 0
 
-type ErrorFormated struct {
+type ErrorFormatted struct {
 	Code    string          `json:"code"`
 	Message string          `json:"message"`
 	Status  int             `json:"status"`
@@ -17,19 +17,19 @@ type ErrorFormated struct {
 	Trace   trace.TraceInfo `json:"-"`
 }
 
-func (e ErrorFormated) Error() string {
+func (e ErrorFormatted) Error() string {
 	return e.Message
 }
 
-func (e ErrorFormated) StatusCode() int {
+func (e ErrorFormatted) StatusCode() int {
 	if e.Status == emptyStatusCode {
 		return http.StatusInternalServerError
 	}
 	return e.Status
 }
 
-func BadRequestError(trace trace.TraceInfo, code string, message string, msgValues ...interface{}) *ErrorFormated {
-	return &ErrorFormated{
+func BadRequestError(trace trace.TraceInfo, code string, message string, msgValues ...interface{}) *ErrorFormatted {
+	return &ErrorFormatted{
 		Code:    code,
 		Message: fmt.Sprintf(message, msgValues...),
 		Status:  http.StatusBadRequest,
@@ -37,8 +37,8 @@ func BadRequestError(trace trace.TraceInfo, code string, message string, msgValu
 	}
 }
 
-func NotFoundError(trace trace.TraceInfo, code string, message string, msgValues ...interface{}) *ErrorFormated {
-	return &ErrorFormated{
+func NotFoundError(trace trace.TraceInfo, code string, message string, msgValues ...interface{}) *ErrorFormatted {
+	return &ErrorFormatted{
 		Code:    code,
 		Message: fmt.Sprintf(message, msgValues...),
 		Status:  http.StatusNotFound,
@@ -46,8 +46,8 @@ func NotFoundError(trace trace.TraceInfo, code string, message string, msgValues
 	}
 }
 
-func UnexpectedError(trace trace.TraceInfo, code string, message string, msgValues ...interface{}) *ErrorFormated {
-	return &ErrorFormated{
+func UnexpectedError(trace trace.TraceInfo, code string, message string, msgValues ...interface{}) *ErrorFormatted {
+	return &ErrorFormatted{
 		Code:    code,
 		Message: fmt.Sprintf(message, msgValues...),
 		Status:  http.StatusInternalServerError,
@@ -55,8 +55,8 @@ func UnexpectedError(trace trace.TraceInfo, code string, message string, msgValu
 	}
 }
 
-func UnprocesableEntityError(trace trace.TraceInfo, code string, message string, msgValues ...interface{}) *ErrorFormated {
-	return &ErrorFormated{
+func UnprocesableEntityError(trace trace.TraceInfo, code string, message string, msgValues ...interface{}) *ErrorFormatted {
+	return &ErrorFormatted{
 		Code:    code,
 		Message: fmt.Sprintf(message, msgValues...),
 		Status:  http.StatusUnprocessableEntity,
