@@ -38,7 +38,7 @@ func TestUser_WithoudAvatar(t *testing.T) {
 func TestUser_Invalid(t *testing.T) {
 	user := NewUser()
 	user.Name = "Fabio"
-	errPassword := user.SetPassword("")
+	errPassword := user.SetPassword("fabio10")
 	user.DefineAvatar("image1.jpg")
 
 	assert.EqualError(t, user.Validate(), "Field 'Email' invalid: required")
@@ -56,4 +56,15 @@ func TestUser_InvalidPassword(t *testing.T) {
 	assert.NotNil(t, user.Validate())
 	assert.NotNil(t, errPassword)
 	assert.Equal(t, errPassword.(*errorformatted.ErrorFormatted).Code, errorcode.ErrorUserBcryptError)
+}
+
+func TestUser_EmptyPassword(t *testing.T) {
+	user := NewUser()
+	user.Name = "Fabio"
+	user.Email = "fabio@fabio.com"
+	errPassword := user.SetPassword("")
+	user.DefineAvatar("image1.jpg")
+
+	assert.NotNil(t, errPassword)
+	assert.Equal(t, errPassword.(*errorformatted.ErrorFormatted).Code, errorcode.ErrorUserValidate)
 }

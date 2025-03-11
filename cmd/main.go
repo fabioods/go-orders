@@ -1,22 +1,29 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	"log"
+
+	"github.com/fabioods/go-orders/internal/handler"
+	"github.com/fabioods/go-orders/internal/infra/rds"
+	"github.com/fabioods/go-orders/internal/infra/s3"
+	"github.com/fabioods/go-orders/internal/infra/webserver"
+	"github.com/fabioods/go-orders/internal/usecase"
 )
 
-func handlerHello(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		w.Write([]byte("Hello World"))
-		return
-	}
-	w.WriteHeader(http.StatusMethodNotAllowed)
-}
-
 func main() {
-	http.HandleFunc("/", handlerHello)
-	fmt.Println("Server running of :8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		panic(err)
+
+	userRepositoryRDS := rds.NewUserRepositoryRDS()
+	s3Repository := s3.NewUploadRepository()
+
+	userUseCase := usecase.NewCreateUserUseCase(userRepositoryRDS, s3Repository)
+	userHandler := handler.NewUserHandler(userUseCase)
+
+	webServer := webserver.NewWebServer(":8080")
+	userHandler.AddUserHandler(webServer)
+
+	log.Println("Server is running on port 8080")
+	if err := webServer.Start(); err != nil {
+		log.Fatal(err)
 	}
+
 }

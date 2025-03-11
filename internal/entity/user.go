@@ -16,7 +16,7 @@ import (
 type User struct {
 	ID        string    `json:"id" validate:"required,uuid4" gorm:"type:uuid;primary_key"`
 	Name      string    `json:"name" validate:"required" gorm:"type:varchar(255); not null"`
-	AvatarURL string    `json:"avatar_url" validate:"required" `
+	AvatarURL string    `json:"avatar_url"`
 	Email     string    `json:"email" validate:"required,email" gorm:"type:varchar(255); not null; uniqueIndex"`
 	Password  string    `json:"-" validate:"required" gorm:"not null"`
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
@@ -35,7 +35,6 @@ func (u *User) DefineAvatar(avatar string) {
 	if len(avatar) == 0 {
 		return
 	}
-
 	u.AvatarURL = avatar
 }
 
@@ -52,11 +51,10 @@ func (u *User) Validate() error {
 	return nil
 }
 
-func (u *User) SetAvatar(avatar string) {
-	u.AvatarURL = avatar
-}
-
 func (u *User) SetPassword(password string) error {
+	if password == "" {
+		return errorformated.BadRequestError(trace.GetTrace(), errorcode.ErrorUserValidate, "Password is required")
+	}
 	hash, err := u.hashPassword(password)
 	if err != nil {
 		return err

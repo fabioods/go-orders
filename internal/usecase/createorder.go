@@ -23,11 +23,12 @@ type (
 		UserRepository  UserRepository
 		OrderRepository OrderRepository
 	}
-
-	OrderRepository interface {
-		Save(ctx context.Context, order *entity.Order) error
-	}
 )
+
+//go:generate mockery --name=OrderRepository --output=mocks --case=underscore
+type OrderRepository interface {
+	Save(ctx context.Context, order *entity.Order) error
+}
 
 func NewCreateOrderUseCase(userRepository UserRepository, orderRepository OrderRepository) *CreateOrderUseCase {
 	return &CreateOrderUseCase{
