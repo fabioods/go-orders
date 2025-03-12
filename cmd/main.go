@@ -14,14 +14,19 @@ func main() {
 
 	userRepositoryRDS := rds.NewUserRepositoryRDS()
 	s3Repository := s3.NewUploadRepository()
+	orderRepositoryRDS := rds.NewOrderRepositoryRDS()
 
 	userUseCase := usecase.NewCreateUserUseCase(userRepositoryRDS)
 	userAvartaUseCase := usecase.NewUserAvatarUseCase(userRepositoryRDS, s3Repository)
 
+	orderUsecase := usecase.NewCreateOrderUseCase(userRepositoryRDS, orderRepositoryRDS)
+
+	orderHandler := handler.NewOrderHandler(orderUsecase)
 	userHandler := handler.NewUserHandler(userUseCase, userAvartaUseCase)
 
 	webServer := webserver.NewWebServer(":8080")
 	userHandler.AddUserHandler(webServer)
+	orderHandler.AddOrderHandler(webServer)
 
 	log.Println("Server is running on port 8080")
 	if err := webServer.Start(); err != nil {
