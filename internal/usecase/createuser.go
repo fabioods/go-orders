@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"mime/multipart"
 
 	"github.com/fabioods/go-orders/internal/entity"
 	"github.com/fabioods/go-orders/internal/errorcode"
@@ -23,12 +22,6 @@ type (
 	}
 )
 
-//go:generate mockery --name=UploadRepository --output=mocks --case=underscore
-type UploadRepository interface {
-	Upload(ctx context.Context, file multipart.File, fileName string) (string, error)
-	Delete(ctx context.Context, fileName string) error
-}
-
 //go:generate mockery --name=UserRepository --output=mocks --case=underscore
 type UserRepository interface {
 	Save(ctx context.Context, user *entity.User) error
@@ -36,10 +29,9 @@ type UserRepository interface {
 	Update(ctx context.Context, user *entity.User) error
 }
 
-func NewCreateUserUseCase(userRepository UserRepository, uploadRepository UploadRepository) *CreateUserUseCase {
+func NewCreateUserUseCase(userRepository UserRepository) *CreateUserUseCase {
 	return &CreateUserUseCase{
-		UserRepository:   userRepository,
-		UploadRepository: uploadRepository,
+		UserRepository: userRepository,
 	}
 }
 

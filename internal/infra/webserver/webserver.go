@@ -37,6 +37,8 @@ func (s *WebServer) AddRoute(method, path string, handler http.HandlerFunc) {
 
 func (s *WebServer) Start() error {
 	s.Router.Use(middleware.Logger)
+	s.Router.Use(middleware.Recoverer)
+
 	s.addPingRoute()
 	for method, routes := range s.Handlers {
 		for path, handler := range routes {

@@ -29,9 +29,10 @@ type UserAvatarUseCase interface {
 	Execute(ctx context.Context, dto usecase.UserAvatarDTO) error
 }
 
-func NewUserHandler(createUserUseCase CreateUserUseCase) *UserHandler {
+func NewUserHandler(createUserUseCase CreateUserUseCase, userAvatarUseCase UserAvatarUseCase) *UserHandler {
 	return &UserHandler{
 		CreateUserUseCase: createUserUseCase,
+		UserAvatarUseCase: userAvatarUseCase,
 	}
 }
 
@@ -54,7 +55,7 @@ func (h *UserHandler) addUser(w http.ResponseWriter, r *http.Request) {
 		Password: userDto.Password,
 	})
 
-	response.WriteResponse(w, nil, err, http.StatusCreated)
+	response.WriteResponse(w, nil, err, http.StatusNoContent)
 }
 
 func (h *UserHandler) addUserAvatar(w http.ResponseWriter, r *http.Request) {
@@ -77,6 +78,6 @@ func (h *UserHandler) addUserAvatar(w http.ResponseWriter, r *http.Request) {
 		Avatar: file,
 	})
 
-	response.WriteResponse(w, nil, err, http.StatusCreated)
+	response.WriteResponse(w, nil, err, http.StatusNoContent)
 
 }

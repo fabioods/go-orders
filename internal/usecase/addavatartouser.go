@@ -20,6 +20,12 @@ type (
 	}
 )
 
+//go:generate mockery --name=UploadRepository --output=mocks --case=underscore
+type UploadRepository interface {
+	Upload(ctx context.Context, file multipart.File, fileName string) (string, error)
+	Delete(ctx context.Context, fileName string) error
+}
+
 func NewUserAvatarUseCase(userRepository UserRepository, uploadRepository UploadRepository) *UserAvatarUseCase {
 	return &UserAvatarUseCase{
 		UserRepository:   userRepository,
@@ -28,7 +34,6 @@ func NewUserAvatarUseCase(userRepository UserRepository, uploadRepository Upload
 }
 
 func (uc *UserAvatarUseCase) Execute(ctx context.Context, dto UserAvatarDTO) error {
-
 	user, err := uc.UserRepository.FindByID(ctx, dto.UserID)
 	if err != nil {
 		return err
