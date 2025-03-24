@@ -61,6 +61,7 @@ func (o *Order) Pay() {
 }
 
 func (o *Order) AddItem(item *OrderItem) {
+	item.OrderID = o.ID
 	o.Items = append(o.Items, item)
 }
 

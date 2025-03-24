@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/fabioods/go-orders/internal/config"
 	"github.com/fabioods/go-orders/internal/handler"
 	"github.com/fabioods/go-orders/internal/infra/rds"
 	"github.com/fabioods/go-orders/internal/infra/s3"
@@ -12,9 +13,12 @@ import (
 
 func main() {
 
-	userRepositoryRDS := rds.NewUserRepositoryRDS()
-	s3Repository := s3.NewUploadRepository()
-	orderRepositoryRDS := rds.NewOrderRepositoryRDS()
+	cfg := config.LoadConfig()
+	postgresConnection := rds.NewPostgresConnection(cfg)
+
+	userRepositoryRDS := rds.NewUserRepositoryRDS(postgresConnection)
+	s3Repository := s3.NewUploadRepository(cfg)
+	orderRepositoryRDS := rds.NewOrderRepositoryRDS(postgresConnection)
 
 	userUseCase := usecase.NewCreateUserUseCase(userRepositoryRDS)
 	userAvartaUseCase := usecase.NewUserAvatarUseCase(userRepositoryRDS, s3Repository)
