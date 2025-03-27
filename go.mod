@@ -40,6 +40,7 @@ require (
 )
 
 require (
+	github.com/aws/aws-sdk-go-v2/service/sqs v1.38.3
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/go-chi/chi/v5 v5.2.1

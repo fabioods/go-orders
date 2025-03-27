@@ -13,6 +13,7 @@ type (
 	CreateOrderUseCase struct {
 		UserRepository  UserRepository
 		OrderRepository OrderRepository
+		OrderSQS        SQSRepository
 	}
 
 	CreateOrderInput struct {
@@ -47,12 +48,18 @@ type (
 //go:generate mockery --name=OrderRepository --output=mocks --case=underscore
 type OrderRepository interface {
 	Save(ctx context.Context, order *entity.Order) error
+	FindByID(ctx context.Context, id string) (*entity.Order, error)
+	UpdateProcessOrder(ctx context.Context, order *entity.Order) error
+}
+type SQSRepository interface {
+	SendMessage(ctx context.Context, body interface{}) error
 }
 
-func NewCreateOrderUseCase(userRepository UserRepository, orderRepository OrderRepository) *CreateOrderUseCase {
+func NewCreateOrderUseCase(userRepository UserRepository, orderRepository OrderRepository, orderSQS SQSRepository) *CreateOrderUseCase {
 	return &CreateOrderUseCase{
 		UserRepository:  userRepository,
 		OrderRepository: orderRepository,
+		OrderSQS:        orderSQS,
 	}
 }
 
@@ -74,6 +81,10 @@ func (c *CreateOrderUseCase) Execute(ctx context.Context, input CreateOrderInput
 	order.CalculateTotal()
 
 	if err := c.OrderRepository.Save(ctx, order); err != nil {
+		return nil, err
+	}
+
+	if err := c.OrderSQS.SendMessage(ctx, order); err != nil {
 		return nil, err
 	}
 

@@ -21,14 +21,20 @@ type UploadRepository struct {
 }
 
 func NewUploadRepository(cfg *config.Config) *UploadRepository {
-	awsCfg, err := awsCfg.LoadDefaultConfig(context.TODO(),
+	opsts := []func(*awsCfg.LoadOptions) error{
 		awsCfg.WithRegion(cfg.S3Config.S3Region),
-		awsCfg.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
+	}
+
+	if cfg.S3Config.S3AccessKey != "" && cfg.S3Config.S3SecretKey != "" {
+		opsts = append(opsts, awsCfg.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
 			cfg.S3Config.S3AccessKey,
 			cfg.S3Config.S3SecretKey,
 			"",
-		)),
-	)
+		)))
+	}
+
+	awsCfg, err := awsCfg.LoadDefaultConfig(context.TODO(), opsts...)
+
 	if err != nil {
 		panic(fmt.Sprintf("Error to load S3 config: %v", err))
 	}

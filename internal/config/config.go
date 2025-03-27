@@ -10,6 +10,7 @@ import (
 type Config struct {
 	S3Config  S3Config
 	RdsClient DBConfig
+	SQSConfig SQSConfig
 }
 
 type S3Config struct {
@@ -28,6 +29,13 @@ type DBConfig struct {
 	SSLMode  string
 }
 
+type SQSConfig struct {
+	SQSRegion    string
+	SQSQueue     string
+	SQSAccessKey string
+	SQSSecretKey string
+}
+
 func LoadConfig() *Config {
 	err := godotenv.Load()
 	if err != nil {
@@ -36,6 +44,16 @@ func LoadConfig() *Config {
 	return &Config{
 		S3Config:  loadS3Config(),
 		RdsClient: loadRdsConfig(),
+		SQSConfig: loadSQSConfig(),
+	}
+}
+
+func loadSQSConfig() SQSConfig {
+	return SQSConfig{
+		SQSRegion:    os.Getenv("SQS_REGION"),
+		SQSQueue:     os.Getenv("SQS_QUEUE"),
+		SQSAccessKey: os.Getenv("SQS_ACCESS_KEY"),
+		SQSSecretKey: os.Getenv("SQS_SECRET_KEY"),
 	}
 }
 
@@ -55,6 +73,6 @@ func loadRdsConfig() DBConfig {
 		User:     os.Getenv("RDS_ADMIN_NAME"),
 		Password: os.Getenv("RDS_ADMIN_PASSWORD"),
 		DBName:   os.Getenv("RDS_DB_NAME"),
-		SSLMode:  "require", // ou pegue via env também
+		SSLMode:  "require",
 	}
 }
