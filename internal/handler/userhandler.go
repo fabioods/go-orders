@@ -3,7 +3,10 @@ package handler
 import (
 	"context"
 	"encoding/json"
+	"mime/multipart"
 	"net/http"
+	"path/filepath"
+	"strings"
 
 	"github.com/fabioods/go-orders/internal/errorcode"
 	"github.com/fabioods/go-orders/internal/infra/webserver"
@@ -59,7 +62,7 @@ func (h *UserHandler) addUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserHandler) addUserAvatar(w http.ResponseWriter, r *http.Request) {
-	file, _, err := r.FormFile("file")
+	file, header, err := r.FormFile("file")
 	if err != nil {
 		ef := errorformatted.BadRequestError(trace.GetTrace(), errorcode.ErrorAvatarFileError, "%s", err.Error())
 		response.WriteResponse(w, nil, ef, http.StatusBadRequest)
@@ -74,10 +77,19 @@ func (h *UserHandler) addUserAvatar(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.UserAvatarUseCase.Execute(r.Context(), usecase.UserAvatarDTO{
-		UserID: userId,
-		Avatar: file,
+		UserID:        userId,
+		Avatar:        file,
+		FileExtension: buildExtension(header),
 	})
 
 	response.WriteResponse(w, nil, err, http.StatusNoContent)
 
+}
+
+func buildExtension(header *multipart.FileHeader) string {
+	ext := strings.ToLower(filepath.Ext(header.Filename))
+	if ext == "" {
+		ext = ".bin" // fallback
+	}
+	return ext
 }

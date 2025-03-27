@@ -46,7 +46,6 @@ func (u *UploadRepository) Upload(ctx context.Context, file multipart.File, file
 		Bucket: aws.String(u.cfg.S3Config.S3Bucket),
 		Key:    aws.String(fileName),
 		Body:   file,
-		ACL:    "public-read",
 	})
 	if err != nil {
 		errFtm := errorformatted.UnexpectedError(trace.GetTrace(), errorcode.ErrorSendS3File, "Error to send file to S3 %s", err.Error())

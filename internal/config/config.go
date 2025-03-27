@@ -1,7 +1,10 @@
 package config
 
 import (
+	"log"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -26,6 +29,10 @@ type DBConfig struct {
 }
 
 func LoadConfig() *Config {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Erro ao carregar o arquivo .env")
+	}
 	return &Config{
 		S3Config:  loadS3Config(),
 		RdsClient: loadRdsConfig(),
@@ -48,6 +55,6 @@ func loadRdsConfig() DBConfig {
 		User:     os.Getenv("RDS_ADMIN_NAME"),
 		Password: os.Getenv("RDS_ADMIN_PASSWORD"),
 		DBName:   os.Getenv("RDS_DB_NAME"),
-		SSLMode:  "disable", // ou pegue via env também
+		SSLMode:  "require", // ou pegue via env também
 	}
 }

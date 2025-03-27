@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"mime/multipart"
 
 	"github.com/fabioods/go-orders/pkg/errorformatted"
@@ -10,8 +11,9 @@ import (
 
 type (
 	UserAvatarDTO struct {
-		UserID string         `json:"user_id"`
-		Avatar multipart.File `json:"avatar"`
+		UserID        string         `json:"user_id"`
+		Avatar        multipart.File `json:"avatar"`
+		FileExtension string         `json:"file_extension"`
 	}
 
 	UserAvatarUseCase struct {
@@ -43,7 +45,8 @@ func (uc *UserAvatarUseCase) Execute(ctx context.Context, dto UserAvatarDTO) err
 		return errorformatted.BadRequestError(trace.GetTrace(), "user_not_found", "User not found")
 	}
 
-	avatarURL, err := uc.UploadRepository.Upload(ctx, dto.Avatar, user.ID)
+	fileName := fmt.Sprintf("%s%s", user.ID, dto.FileExtension)
+	avatarURL, err := uc.UploadRepository.Upload(ctx, dto.Avatar, fileName)
 	if err != nil {
 		return err
 	}
